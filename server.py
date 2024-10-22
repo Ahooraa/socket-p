@@ -61,17 +61,17 @@ def handle_client(client_socket, client_id, user_records):
                     except IndexError:
                         send_text(client_socket, "Index error! try again")
                         continue
-                elif message.startswith("INDEXES:"):
-                    indexes= message[len("INDEXES:"):] # Extract the string containing indexes seperated by ,
-                    indexes_ls= indexes.split(",")
-                    print(indexes_ls)
-                    for i, index in enumerate(indexes_ls):
-                        indexes_ls[i] = int(index)
-                    send_text(client_socket,"the client_id for the indexes you specified are as follows\n")
-                    send_dataframe(client_socket,user_records.iloc[indexes_ls, user_records.columns.get_loc('client')])
-                    user_records.iloc[indexes_ls, user_records.columns.get_loc('client')] = client_id
-                    send_text(client_socket,"now those records are allocated to you\n")
-                    send_dataframe(client_socket,get_client_records(client_id, user_records))
+                elif message.startswith("IDS:") :
+                    ids= message[len("IDS:"):] # Extract the string containing ids seperated by ,
+                    ids_ls= ids.split(",")
+                    for i, value in enumerate(ids_ls):
+                        ids_ls[i] = f"'{value}'"
+
+                    user_records.loc[user_records["'id'"].isin(ids_ls), 'client']= client_id
+                    filtered_records = user_records[user_records["'id'"].isin(ids_ls)]
+                    send_text(client_socket,"now those records are allocated to you")
+                    send_dataframe(client_socket, filtered_records)
+
                 else:
                     log_chat(log_file_path, f"Client[{client_id}]: {message}")
             else:

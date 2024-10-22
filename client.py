@@ -57,9 +57,9 @@ def main():
             client.shutdown(socket.SHUT_WR) # Stop sending data to the server
             break
         elif command.lower() == "get records":
-            print("please enter indexes of the records you want:")
+            print("please enter IDs of the records you want:")
             indexes = input()
-            message= "INDEXES:"+indexes
+            message= "IDS:"+indexes
             client.send(message.encode("utf-8"))
     thread.join()  # Wait for the receive thread to finish before closing the socket
     client.close()
